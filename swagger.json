@@ -1,0 +1,403 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the FlyFast API server for handling flight offers and URL generation.",
+        "title": "FlyFast API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/": {
+            "get": {
+                "description": "Returns a welcome message",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "general"
+                ],
+                "summary": "Welcome endpoint",
+                "responses": {
+                    "200": {
+                        "description": "Welcome message",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/credits": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieves the remaining credits for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "credits"
+                ],
+                "summary": "Get remaining credits",
+                "responses": {
+                    "200": {
+                        "description": "Contains creditsLeft field",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/offers": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieves flight offers based on the provided payload",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offers"
+                ],
+                "summary": "Get flight offers",
+                "parameters": [
+                    {
+                        "description": "Flight offers request payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.RequestPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.Offer"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/url": {
+            "post": {
+                "description": "Generates a URL based on the provided payload",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "urls"
+                ],
+                "summary": "Generate URL",
+                "parameters": [
+                    {
+                        "description": "URL generation request payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.RequestPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "types.FlightLeg": {
+            "type": "object",
+            "properties": {
+                "airline": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "destination": {
+                    "type": "string"
+                },
+                "flightNumber": {
+                    "type": "string"
+                },
+                "origin": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Offer": {
+            "type": "object",
+            "properties": {
+                "destination": {
+                    "type": "string"
+                },
+                "origin": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "returnDate": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "tripLength": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.ParametersBuilder": {
+            "type": "object",
+            "properties": {
+                "arrivalHourEnd": {
+                    "type": "integer"
+                },
+                "arrivalHourStart": {
+                    "type": "integer"
+                },
+                "avoidUSConnections": {
+                    "type": "boolean"
+                },
+                "cabin": {
+                    "type": "string"
+                },
+                "combineRoutes": {
+                    "type": "boolean"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "departHourEnd": {
+                    "type": "integer"
+                },
+                "departHourStart": {
+                    "type": "integer"
+                },
+                "destinations": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "emissions": {
+                    "type": "boolean"
+                },
+                "excludedAirlines": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "excludedAirports": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "flightDuration": {
+                    "type": "integer"
+                },
+                "inboundFlightLegs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.FlightLeg"
+                    }
+                },
+                "itineraryType": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "maxLayover": {
+                    "type": "integer"
+                },
+                "maxPrice": {
+                    "type": "integer"
+                },
+                "minLayover": {
+                    "type": "integer"
+                },
+                "numStops": {
+                    "type": "string"
+                },
+                "onlyAirlines": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "onlyAirports": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "origins": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "outboundFlightLegs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.FlightLeg"
+                    }
+                },
+                "passengerType": {
+                    "$ref": "#/definitions/types.PassengerType"
+                },
+                "rangeEndDate": {
+                    "type": "string"
+                },
+                "rangeStartDate": {
+                    "type": "string"
+                },
+                "requestLocation": {
+                    "type": "string"
+                },
+                "showSeparateTickets": {
+                    "type": "boolean"
+                },
+                "sortByIndex": {
+                    "type": "integer"
+                },
+                "totalCarryOnBags": {
+                    "type": "integer"
+                },
+                "totalCheckedBags": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.PassengerType": {
+            "type": "object",
+            "properties": {
+                "adults": {
+                    "type": "integer"
+                },
+                "children": {
+                    "type": "integer"
+                },
+                "infantInSeat": {
+                    "type": "integer"
+                },
+                "infantOnLap": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.RequestPayload": {
+            "type": "object",
+            "properties": {
+                "maxTripLength": {
+                    "type": "integer"
+                },
+                "minTripLength": {
+                    "type": "integer"
+                },
+                "parameters": {
+                    "$ref": "#/definitions/types.ParametersBuilder"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-API-Key",
+            "in": "header"
+        }
+    }
+}
